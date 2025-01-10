@@ -12,3 +12,82 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+model User {
+  id            Int        @id @unique @default(autoincrement())
+  email         String         @unique
+  password      String
+  nickname      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  tokens        Token[]
+  readingStatus ReadingStatus[]
+  reviews       Review[]
+  statistics    Statistics[]
+}
+
+model Token {
+  userId    Int      @unique
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ReadingStatus {
+  id            Int   @id @unique @default(autoincrement())
+  userId        Int
+  status        Status
+  name          String
+  writer        String
+  startReadDate DateTime @db.Date
+  lastReadDate  DateTime? @db.Date
+  endDate       DateTime? @db.Date
+  genre         Genre
+  currentPage   Int
+  totalPage     Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id         Int   @id @unique @default(autoincrement())
+  userId     Int
+  title      String
+  content    String   @db.Text
+  rating     Int      @db.Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Statistics {
+  id            Int   @id @unique @default(autoincrement())
+  userId        Int
+  type          StatType
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  calculated_at DateTime
+  value         Json
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+enum StatType {
+  MONTHLY
+  GENRE
+  YEARLY
+  STATUS
+}
+enum Genre {
+  NOVEL
+  NONFICTION 
+  SELFHELP  
+  FANTASY   
+  MYSTERY   
+}
+
+enum Status {
+  READING
+  COMPLETED
+  ABANDONED
+}
