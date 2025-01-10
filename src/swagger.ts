@@ -10,6 +10,7 @@ export function setupSwagger(app: INestApplication) {
     .setTitle('API Docs')
     .setDescription('API documentation with authentication')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

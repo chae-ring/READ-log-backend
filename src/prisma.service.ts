@@ -31,7 +31,7 @@ export class PrismaService
   } // 모듈이 파괴되기 전에 호출
 
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
+    process.on('beforeExit', async () => {
       await app.close();
     });
   } // 애플리케이션이 종료될 때 Prisma 클라이언트와 연결을 끊도록 하는 역할
