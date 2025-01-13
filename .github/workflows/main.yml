@@ -10,12 +10,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > /tmp/read-log.key
+          chmod 600 /tmp/read-log.key
       - name: Run scripts in server
         uses: appleboy/ssh-action@master
+
         with:
           host: ${{ secrets.REMOTE_IP }} # 인스턴스 IP
           username: ${{ secrets.REMOTE_USER }} # 우분투 아이디
-          key: ${{ secrets.REMOTE_PRIVATE_KEY }} # ec2 instance pem key
+          key: /tmp/read-log.key # ec2 instance pem key
           port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트
           script: |
             cd /home/ubuntu/READ-log-backend
