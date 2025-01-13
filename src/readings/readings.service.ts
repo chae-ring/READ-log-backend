@@ -1,46 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-//import { CreateReadingDto, UpdateReadingDto } from '../dto/readings.dto';
+import { CreateReadingDto } from '../dto/readings.dto';
+import { Status } from '@prisma/client'; // Prisma에서 가져온 Status 열거형
+import { Genre } from '@prisma/client'; // Prisma에서 가져온 Status 열거형
 
 @Injectable()
 export class ReadingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // 독서 현황 전체 조회 (특정 사용자 기준)
-  async findByStatus(userId: number, status?: string) {
-    const whereClause: any = { userId };
-
-    if (status) {
-      whereClause.status = status; // 상태가 전달되었을 경우 조건에 추가
-    }
-
-    return this.prisma.readingStatus.findMany({
-      where: whereClause,
-    });
-  }
-
-  // 독서 현황 등록
-  /*async create(userId: number, createReadingDto: CreateReadingDto) {
-    return this.prisma.readingStatus.create({
+  async createReading(createReadingDto: CreateReadingDto, userId: number) {
+    return await this.prisma.readingStatus.create({
       data: {
         userId,
-        ...createReadingDto,
+        name: createReadingDto.name,
+        writer: createReadingDto.writer,
+        startReadDate: new Date(createReadingDto.startReadDate), // Date 객체로 변환
+        status: createReadingDto.status as Status, // status를 Status로 강제 변환
+        lastReadDate: new Date(createReadingDto.lastReadDate), // Date 객체로 변환
+        genre: createReadingDto.genre as Genre,
+        currentPage: createReadingDto.currentPage,
+        totalPage: createReadingDto.totalPage,
       },
-    });
-  }*/
-
-  // 독서 현황 수정
-  /*async update(id: number, userId: number, updateReadingDto: UpdateReadingDto) {
-    return this.prisma.readingStatus.updateMany({
-      where: { id, userId },
-      data: updateReadingDto,
-    });
-  }*/
-
-  // 독서 현황 삭제
-  async delete(id: number, userId: number) {
-    return this.prisma.readingStatus.deleteMany({
-      where: { id, userId },
     });
   }
 }

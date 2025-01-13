@@ -6,6 +6,8 @@ import {
   IsEnum,
   IsNumber,
 } from 'class-validator';
+import { Status } from '@prisma/client'; // Prisma에서 가져온 Status 열거형
+
 export enum Genre {
   NOVEL = 'NOVEL',
   NONFICTION = 'NONFICTION',
@@ -14,9 +16,12 @@ export enum Genre {
   MYSTERY = 'MYSTERY',
 }
 export class CreateReadingDto {
-  @ApiProperty({ example: '읽는 중', description: '독서 상태' })
-  @IsString()
-  status: string;
+  @ApiProperty({
+    description: 'The current status of the reading',
+    enum: Status, // Prisma에서 가져온 Status 열거형 사용
+  })
+  @IsEnum(Status)
+  status: Status;
 
   @ApiProperty({ example: '책 제목', description: '책 제목' })
   @IsString()
@@ -31,34 +36,60 @@ export class CreateReadingDto {
     description: '독서 시작 날짜',
   })
   @IsDate()
-  startReadDate?: Date;
+  startReadDate: Date;
 
   @ApiProperty({
     example: '2025-01-05',
     description: '마지막 읽은 날짜',
   })
-  @IsOptional()
   @IsDate()
-  lastReadDate?: Date;
+  lastReadDate: Date;
 
   @ApiProperty({
     description: '현재 페이지',
   })
   @IsNumber()
-  currentPage?: number;
+  currentPage: number;
 
   @ApiProperty({
     description: '총 페이지',
   })
   @IsNumber()
-  totalPage?: number;
+  totalPage: number;
 
   @ApiProperty({ example: 'NOVEL', enum: Genre, description: '책의 장르' })
-  @IsOptional()
   @IsEnum(Genre, {
     message: 'NOVEL, NONFICTION, SELFHELP, FANTASY, MYSTERY',
   })
-  genre?: Genre;
+  genre: Genre;
+}
+export class ReadingStatus {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  writer: string;
+
+  @ApiProperty()
+  startReadDate: Date;
+
+  @ApiProperty()
+  status: Status;
+
+  @ApiProperty()
+  lastReadDate: Date;
+
+  @ApiProperty()
+  genre: Genre;
+
+  @ApiProperty()
+  currentPage: number;
+
+  @ApiProperty()
+  totalPage: number;
 }
 
 export class UpdateReadingDto {

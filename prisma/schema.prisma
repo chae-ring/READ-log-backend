@@ -34,7 +34,7 @@ model Token {
 }
 
 model ReadingStatus {
-  id            Int   @id @unique @default(autoincrement())
+  id            Int   @id @default(autoincrement())
   userId        Int
   status        Status
   name          String
