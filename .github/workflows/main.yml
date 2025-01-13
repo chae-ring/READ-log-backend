@@ -13,12 +13,12 @@ jobs:
       - name: Run scripts in server
         uses: appleboy/ssh-action@master
         with:
-          password: ${{ secrets.SSH_PASSWORD }}
-          host: ${{ secrets.54.180.26.17 }}
-          username: ${{ secrets.ubuntu }}
-          port: ${{ secrets.22 }}
+          host: ${{ secrets.REMOTE_IP }} # 인스턴스 IP
+          username: ${{ secrets.REMOTE_USER }} # 우분투 아이디
+          key: ${{ secrets.REMOTE_PRIVATE_KEY }} # ec2 instance pem key
+          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트
           script: |
-           cd /home/ubuntu/READ-log-backend
-           git pull main
-           npm run build
-           pm2 restart
+            cd /home/ubuntu/READ-log-backend
+            git pull main
+            npm run build
+            pm2 restart
