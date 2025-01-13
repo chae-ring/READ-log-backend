@@ -10,10 +10,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup SSH key
+      - name: Set up SSH
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > /tmp/read-log.key
-          chmod 600 /tmp/read-log.key
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 54.180.26.17 >> ~/.ssh/known_hosts
+
       - name: Run scripts in server
         uses: appleboy/ssh-action@master
 
