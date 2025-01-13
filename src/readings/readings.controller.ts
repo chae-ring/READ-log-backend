@@ -31,7 +31,7 @@ import { ParseIntPipe } from '@nestjs/common'; // 추가: ParseIntPipe 임포트
 export class ReadingsController {
   constructor(private readonly readingsService: ReadingsService) {}
 
-  @Post('register')
+  @Post()
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Register a reading status' })
