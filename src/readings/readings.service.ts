@@ -28,4 +28,32 @@ export class ReadingsService {
       where: { userId, status }, // status 값으로 필터링
     });
   }
+  // 독서 현황 수정
+  async updateReading(
+    userId: number,
+    readingId: number,
+    updateDto: CreateReadingDto,
+  ) {
+    return await this.prisma.readingStatus.update({
+      where: { id: readingId },
+      data: {
+        userId,
+        name: updateDto.name,
+        writer: updateDto.writer,
+        startReadDate: new Date(updateDto.startReadDate),
+        status: updateDto.status as Status,
+        lastReadDate: new Date(updateDto.lastReadDate),
+        genre: updateDto.genre as Genre,
+        currentPage: updateDto.currentPage,
+        totalPage: updateDto.totalPage,
+      },
+    });
+  }
+
+  // 독서 현황 삭제
+  async deleteReading(userId: number, readingId: number) {
+    return await this.prisma.readingStatus.delete({
+      where: { id: readingId },
+    });
+  }
 }
