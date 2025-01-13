@@ -92,26 +92,13 @@ export class ReadingStatus {
   totalPage: number;
 }
 
-export class UpdateReadingDto {
-  status?: string;
-  name?: string;
-  writer?: string;
-  startReadDate?: Date;
-  lastReadDate?: Date;
-  endDate?: Date;
-  genre?: string;
-  currentPage?: number;
-  totalPage?: number;
-}
-export class GetReadingStatusDto {
-  @ApiProperty({ required: false, description: '독서 상태' })
-  @IsString()
-  status?: string; // status는 선택 사항이므로 @IsOptional()을 추가
-}
 export class GetReadingStatusResponseDTO {
-  @ApiProperty({ example: '읽는 중', description: '독서 상태' })
-  @IsString()
-  status: string;
+  @ApiProperty({
+    description: 'The current status of the reading',
+    enum: Status, // Prisma에서 가져온 Status 열거형 사용
+  })
+  @IsEnum(Status)
+  status: Status;
 
   @ApiProperty({ example: '책 제목', description: '책 제목' })
   @IsString()
@@ -132,9 +119,8 @@ export class GetReadingStatusResponseDTO {
     example: '2025-01-05',
     description: '마지막 읽은 날짜',
   })
-  @IsOptional()
   @IsDate()
-  lastReadDate?: Date;
+  lastReadDate: Date;
 
   @ApiProperty({
     description: '현재 페이지',
@@ -146,7 +132,7 @@ export class GetReadingStatusResponseDTO {
     description: '총 페이지',
   })
   @IsNumber()
-  totalPage?: number;
+  totalPage: number;
 
   @ApiProperty({ example: 'NOVEL', enum: Genre, description: '책의 장르' })
   @IsOptional()

@@ -23,4 +23,9 @@ export class ReadingsService {
       },
     });
   }
+  async getReadingsByStatus(userId: number, status: Status) {
+    return await this.prisma.readingStatus.findMany({
+      where: { userId, status }, // status 값으로 필터링
+    });
+  }
 }

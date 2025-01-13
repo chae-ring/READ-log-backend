@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  Get,
+  Query,
+} from '@nestjs/common';
 import {
   ApiOperation,
   ApiTags,
@@ -6,8 +14,13 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BearerGuard } from '../bearer.guard'; // BearerGuard 임포트
-import { CreateReadingDto, ReadingStatus } from '../dto/readings.dto'; // DTO 임포트
+import {
+  CreateReadingDto,
+  GetReadingStatusResponseDTO,
+  ReadingStatus,
+} from '../dto/readings.dto'; // DTO 임포트
 import { ReadingsService } from './readings.service'; // Service 임포트
+import { Status } from '@prisma/client'; // Status 임포트
 
 @ApiTags('Readings')
 @Controller('readings')
@@ -17,7 +30,7 @@ export class ReadingsController {
   @Post('register')
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: '독서 현황 등록' })
+  @ApiOperation({ summary: 'Register a reading status' })
   @ApiResponse({ type: ReadingStatus })
   async registerReading(
     @Body() createReadingDto: CreateReadingDto,
@@ -29,5 +42,25 @@ export class ReadingsController {
       userId,
     );
     return { data: reading };
+  }
+  @Get('status')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get reading statuses by status' })
+  @ApiResponse({ type: GetReadingStatusResponseDTO })
+  async getReadingsByStatus(
+    @Request() req,
+    @Query('status') status: Status, // 쿼리 파라미터로 status를 받음
+  ) {
+    const userId = req.user.id; // 사용자 ID 추출
+    const readings = await this.readingsService.getReadingsByStatus(
+      userId,
+      status,
+    );
+    return {
+      data: readings,
+      message: 'Readings fetched successfully.',
+      statusCode: 200,
+    };
   }
 }
