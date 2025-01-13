@@ -10,20 +10,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 54.180.26.17 >> ~/.ssh/known_hosts
-
       - name: Run scripts in server
         uses: appleboy/ssh-action@master
 
         with:
           host: ${{ secrets.REMOTE_IP }} # 인스턴스 IP
           username: ${{ secrets.REMOTE_USER }} # 우분투 아이디
-          key: /tmp/read-log.key # ec2 instance pem key
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트
           script: |
             cd /home/ubuntu/READ-log-backend
