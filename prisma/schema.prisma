@@ -62,13 +62,16 @@ model Review {
 }
 
 model Statistics {
-  id            Int   @id @unique @default(autoincrement())
+  id            Int      @id @unique @default(autoincrement())
   userId        Int
-  type          StatType
+  statType      StatType 
+  month         Int?     
+  year          Int?     
+  genre         Genre?   
+  status        Status?  
+  count         Int      @default(0) 
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-  calculated_at DateTime
-  value         Json
   user          User     @relation(fields: [userId], references: [id])
 }
 

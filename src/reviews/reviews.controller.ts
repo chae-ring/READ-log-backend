@@ -17,13 +17,17 @@ import {
 } from '@nestjs/swagger';
 import { CreateReviewDto, ReviewResponseDto } from '../dto/reviews.dto';
 import { ReviewsService } from './reviews.service';
+import { StatisticsService } from './statistics.service';
 import { BearerGuard } from '../bearer.guard'; // BearerGuard 임포트
 import { ParseIntPipe } from '@nestjs/common'; // 추가: ParseIntPipe 임포트
-
+import { StatType } from '@prisma/client'; // Status 임포트
 @ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(
+    private readonly reviewsService: ReviewsService,
+    private readonly statisticsService: StatisticsService,
+  ) {}
 
   @Post()
   @UseGuards(BearerGuard) // 인증된 사용자만 접근
@@ -86,5 +90,73 @@ export class ReviewsController {
     const userId = req.user.id;
     await this.reviewsService.deleteReview(userId, id);
     return { message: 'Review deleted successfully.' };
+  }
+
+  // 연도별 통계 조회
+  @Get('yearly/:statType')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get yearly statistics' })
+  async getYearlyStatistics(
+    @Request() req,
+    @Param('statType') statType: StatType,
+  ) {
+    const userId = req.user.id;
+    const statistics = await this.statisticsService.getYearlyStatistics(
+      userId,
+      statType,
+    );
+    return { data: statistics };
+  }
+
+  // 월별 통계 조회
+  @Get('monthly/:statType')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get monthly statistics' })
+  async getMonthlyStatistics(
+    @Request() req,
+    @Param('statType') statType: StatType,
+  ) {
+    const userId = req.user.id;
+    const statistics = await this.statisticsService.getMonthlyStatistics(
+      userId,
+      statType,
+    );
+    return { data: statistics };
+  }
+
+  // 장르별 통계 조회
+  @Get('genre/:statType')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get genre statistics' })
+  async getGenreStatistics(
+    @Request() req,
+    @Param('statType') statType: StatType,
+  ) {
+    const userId = req.user.id;
+    const statistics = await this.statisticsService.getGenreStatistics(
+      userId,
+      statType,
+    );
+    return { data: statistics };
+  }
+
+  // 독서 상태별 통계 조회
+  @Get('status/:statType')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get status statistics' })
+  async getStatusStatistics(
+    @Request() req,
+    @Param('statType') statType: StatType,
+  ) {
+    const userId = req.user.id;
+    const statistics = await this.statisticsService.getStatusStatistics(
+      userId,
+      statType,
+    );
+    return { data: statistics };
   }
 }

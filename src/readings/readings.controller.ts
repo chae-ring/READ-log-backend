@@ -25,11 +25,15 @@ import {
 import { ReadingsService } from './readings.service'; // Service 임포트
 import { Status } from '@prisma/client'; // Status 임포트
 import { ParseIntPipe } from '@nestjs/common'; // 추가: ParseIntPipe 임포트
+import { StatisticsService } from 'src/reviews/statistics.service'; // 통계 서비스 임포트
 
 @ApiTags('Readings')
 @Controller('readings')
 export class ReadingsController {
-  constructor(private readonly readingsService: ReadingsService) {}
+  constructor(
+    private readonly readingsService: ReadingsService,
+    private readonly statisticsService: StatisticsService,
+  ) {}
 
   @Post()
   @UseGuards(BearerGuard)
@@ -45,6 +49,7 @@ export class ReadingsController {
       createReadingDto,
       userId,
     );
+
     return { data: reading };
   }
   @Get('status')
