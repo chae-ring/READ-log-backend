@@ -26,7 +26,9 @@ export class AuthService {
   // 로그인
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email: email },
+    });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
