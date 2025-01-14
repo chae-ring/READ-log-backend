@@ -13,9 +13,6 @@ export class AuthService {
 
   async signup(signupDto: SignupDto) {
     const { email, password, nickname } = signupDto;
-    console.log('Password received:', password); // 비밀번호 값 출력
-    console.log('email received:', email); // 비밀번호 값 출력
-    console.log('name received:', nickname); // 비밀번호 값 출력
 
     const salt = await bcrypt.genSalt(10); // salt 생성
     const hashedPassword = await bcrypt.hash(password, salt); // 비밀번호 해싱
@@ -23,7 +20,6 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: { email, password: hashedPassword, nickname },
     });
-    console.log('성공');
     return { message: 'Signup successful', userId: user.id };
   }
 
@@ -47,7 +43,6 @@ export class AuthService {
       update: { token }, // 토큰 업데이트
       create: { userId: user.id, token }, // 새로 토큰 생성
     });
-    console.log('로그인성공');
 
     return { message: 'Login successful', accessToken: token };
   }
