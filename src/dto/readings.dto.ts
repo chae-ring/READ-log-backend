@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsNumber,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Status } from '@prisma/client'; // Prisma에서 가져온 Status 열거형
 
 export enum Genre {
@@ -18,7 +19,7 @@ export enum Genre {
 export class CreateReadingDto {
   @ApiProperty({
     description: 'The current status of the reading',
-    enum: Status, // Prisma에서 가져온 Status 열거형 사용
+    enum: Status,
   })
   @IsEnum(Status)
   status: Status;
@@ -36,6 +37,7 @@ export class CreateReadingDto {
     description: '독서 시작 날짜',
   })
   @IsDate()
+  @Type(() => Date)
   startReadDate: Date;
 
   @ApiProperty({
@@ -43,6 +45,7 @@ export class CreateReadingDto {
     description: '마지막 읽은 날짜',
   })
   @IsDate()
+  @Type(() => Date)
   lastReadDate: Date;
 
   @ApiProperty({

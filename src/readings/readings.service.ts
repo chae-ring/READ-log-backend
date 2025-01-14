@@ -13,30 +13,28 @@ export class ReadingsService {
 
   // 책 등록 시 자동으로 통계 업데이트
   async createReading(createReadingDto: CreateReadingDto, userId: number) {
-    // 독서 상태 생성
     const reading = await this.prisma.readingStatus.create({
       data: {
         userId,
         name: createReadingDto.name,
         writer: createReadingDto.writer,
-        startReadDate: new Date(createReadingDto.startReadDate),
-        status: createReadingDto.status as Status,
-        lastReadDate: new Date(createReadingDto.lastReadDate),
-        genre: createReadingDto.genre as Genre,
+        startReadDate: new Date(createReadingDto.startReadDate), // 명시적 변환
+        status: createReadingDto.status,
+        lastReadDate: new Date(createReadingDto.lastReadDate), // 명시적 변환
+        genre: createReadingDto.genre,
         currentPage: createReadingDto.currentPage,
         totalPage: createReadingDto.totalPage,
       },
     });
 
-    // 통계 자동 업데이트
     await this.statisticsService.updateStatisticsAutomatically(
       userId,
-      'STATUS', // 예시로 'STATUS'로 통계 업데이트
+      'STATUS',
       createReadingDto.genre,
       createReadingDto.status,
-      new Date(createReadingDto.startReadDate).getMonth() + 1, // 월
-      new Date(createReadingDto.startReadDate).getFullYear(), // 년
-      1, // 추가된 책은 1 증가
+      new Date(createReadingDto.startReadDate).getMonth() + 1,
+      new Date(createReadingDto.startReadDate).getFullYear(),
+      1,
     );
 
     return reading;
