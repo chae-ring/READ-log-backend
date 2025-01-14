@@ -23,7 +23,7 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: { email, password: hashedPassword, nickname },
     });
-
+    console.log('성공');
     return { message: 'Signup successful', userId: user.id };
   }
 
@@ -47,6 +47,7 @@ export class AuthService {
       update: { token }, // 토큰 업데이트
       create: { userId: user.id, token }, // 새로 토큰 생성
     });
+    console.log('로그인성공');
 
     return { message: 'Login successful', accessToken: token };
   }
