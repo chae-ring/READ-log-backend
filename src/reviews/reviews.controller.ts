@@ -20,7 +20,6 @@ import { ReviewsService } from './reviews.service';
 import { StatisticsService } from './statistics.service';
 import { BearerGuard } from '../bearer.guard'; // BearerGuard 임포트
 import { ParseIntPipe } from '@nestjs/common'; // 추가: ParseIntPipe 임포트
-import { StatType } from '@prisma/client'; // Status 임포트
 @ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
@@ -93,70 +92,47 @@ export class ReviewsController {
   }
 
   // 연도별 통계 조회
-  @Get('yearly/:statType')
+  @Get('yearly')
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get yearly statistics' })
-  async getYearlyStatistics(
-    @Request() req,
-    @Param('statType') statType: StatType,
-  ) {
+  async getYearlyStatistics(@Request() req) {
     const userId = req.user.id;
-    const statistics = await this.statisticsService.getYearlyStatistics(
-      userId,
-      statType,
-    );
+    const statistics = await this.statisticsService.getYearlyStatistics(userId);
     return { data: statistics };
   }
 
   // 월별 통계 조회
-  @Get('monthly/:statType')
+  @Get('monthly')
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get monthly statistics' })
-  async getMonthlyStatistics(
-    @Request() req,
-    @Param('statType') statType: StatType,
-  ) {
+  async getMonthlyStatistics(@Request() req) {
     const userId = req.user.id;
-    const statistics = await this.statisticsService.getMonthlyStatistics(
-      userId,
-      statType,
-    );
+    const statistics =
+      await this.statisticsService.getMonthlyStatistics(userId);
     return { data: statistics };
   }
 
   // 장르별 통계 조회
-  @Get('genre/:statType')
+  @Get('genre')
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get genre statistics' })
-  async getGenreStatistics(
-    @Request() req,
-    @Param('statType') statType: StatType,
-  ) {
+  async getGenreStatistics(@Request() req) {
     const userId = req.user.id;
-    const statistics = await this.statisticsService.getGenreStatistics(
-      userId,
-      statType,
-    );
+    const statistics = await this.statisticsService.getGenreStatistics(userId);
     return { data: statistics };
   }
 
   // 독서 상태별 통계 조회
-  @Get('status/:statType')
+  @Get('status')
   @UseGuards(BearerGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get status statistics' })
-  async getStatusStatistics(
-    @Request() req,
-    @Param('statType') statType: StatType,
-  ) {
+  async getStatusStatistics(@Request() req) {
     const userId = req.user.id;
-    const statistics = await this.statisticsService.getStatusStatistics(
-      userId,
-      statType,
-    );
+    const statistics = await this.statisticsService.getStatusStatistics(userId);
     return { data: statistics };
   }
 }

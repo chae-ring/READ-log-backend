@@ -40,7 +40,6 @@ export class ReadingsService {
     return reading;
   }
 
-  // 독서 현황 수정 시 자동으로 통계 업데이트
   async updateReading(
     userId: number,
     readingId: number,
@@ -50,6 +49,10 @@ export class ReadingsService {
     const existingReading = await this.prisma.readingStatus.findUnique({
       where: { id: readingId },
     });
+
+    if (!existingReading) {
+      throw new Error('Reading not found');
+    }
 
     // 독서 상태 수정
     const updatedReading = await this.prisma.readingStatus.update({
@@ -67,7 +70,6 @@ export class ReadingsService {
       },
     });
 
-    // 통계 자동 업데이트
     // 기존 통계 감소
     await this.statisticsService.updateStatisticsAutomatically(
       userId,
@@ -76,10 +78,10 @@ export class ReadingsService {
       existingReading.status,
       new Date(existingReading.startReadDate).getMonth() + 1,
       new Date(existingReading.startReadDate).getFullYear(),
-      -1, // 수정 전 상태에서 감소
+      -1, // 기존 데이터 감소
     );
 
-    // 새로운 통계 증가
+    // 수정된 데이터 통계 증가
     await this.statisticsService.updateStatisticsAutomatically(
       userId,
       'STATUS',
@@ -87,27 +89,27 @@ export class ReadingsService {
       updateDto.status,
       new Date(updateDto.startReadDate).getMonth() + 1,
       new Date(updateDto.startReadDate).getFullYear(),
-      1, // 수정 후 상태에서 증가
+      1, // 수정된 데이터 증가
     );
 
     return updatedReading;
   }
 
-  // 독서 현황 삭제 시 자동으로 통계 업데이트
   async deleteReading(userId: number, readingId: number) {
+    // 삭제될 독서 현황 조회
     const deletedReading = await this.prisma.readingStatus.delete({
       where: { id: readingId },
     });
 
-    // 삭제된 독서 현황의 통계를 차감 (예: count 감소)
+    // 통계 감소
     await this.statisticsService.updateStatisticsAutomatically(
       userId,
-      'STATUS', // 예시로 'STATUS'로 통계 업데이트
+      'STATUS',
       deletedReading.genre,
       deletedReading.status,
-      new Date(deletedReading.startReadDate).getMonth() + 1, // 월
-      new Date(deletedReading.startReadDate).getFullYear(), // 년
-      -1, // 삭제된 항목은 1 감소
+      new Date(deletedReading.startReadDate).getMonth() + 1,
+      new Date(deletedReading.startReadDate).getFullYear(),
+      -1, // 데이터 감소
     );
 
     return deletedReading;
