@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { ReadingsModule } from './readings/readings.module';
 import { AuthModule } from './auth/auth.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { MypageModule } from './mypage/mypage.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     ReadingsModule,
     ReviewsModule,
     AuthModule,
+    MypageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
