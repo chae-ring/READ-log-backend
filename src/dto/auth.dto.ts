@@ -8,6 +8,7 @@ export class SignupDto {
 
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   password: string;
 
   @ApiProperty()
