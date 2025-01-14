@@ -11,10 +11,18 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // 회원가입
   async signup(signupDto: SignupDto) {
     const { email, password, nickname } = signupDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // password 값이 정상적으로 전달되는지 확인
+    if (!password) {
+      throw new Error('Password cannot be empty');
+    }
+
+    console.log('Password received:', password); // 비밀번호 값 출력
+
+    const salt = await bcrypt.genSalt(10); // salt 생성
+    const hashedPassword = await bcrypt.hash(password, salt); // 비밀번호 해싱
 
     const user = await this.prisma.user.create({
       data: { email, password: hashedPassword, nickname },
